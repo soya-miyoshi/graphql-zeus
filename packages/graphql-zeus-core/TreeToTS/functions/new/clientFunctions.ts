@@ -17,6 +17,7 @@ import {
   chainOptions,
   FetchFunction,
   GenericOperation,
+  InputValueType,
   OperationOptions,
   SubscriptionFunction,
   ThunderGraphQLOptions,
@@ -33,12 +34,7 @@ export const Thunder =
     operation: O,
     graphqlOptions?: ThunderGraphQLOptions<OVERRIDESCLR>,
   ) =>
-  <Z extends ValueTypes[R]>(
-    o: Z & {
-      [P in keyof Z]: P extends keyof ValueTypes[R] ? Z[P] : never;
-    },
-    ops?: OperationOptions & { variables?: Record<string, unknown> },
-  ) => {
+  (o: ValueTypes[R] & InputValueType, ops?: OperationOptions & { variables?: Record<string, unknown> }) => {
     const options = {
       ...thunderGraphQLOptions,
       ...graphqlOptions,
@@ -61,7 +57,7 @@ export const Thunder =
         });
       }
       return data;
-    }) as Promise<InputType<GraphQLTypes[R], Z, UnionOverrideKeys<SCLR, OVERRIDESCLR>>>;
+    }) as Promise<InputType<GraphQLTypes[R], ValueTypes[R], UnionOverrideKeys<SCLR, OVERRIDESCLR>>>;
   };
 
 export const Chain = (...options: chainOptions) => Thunder(apiFetch(options));
